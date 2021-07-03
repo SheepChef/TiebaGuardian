@@ -82,4 +82,4 @@ TiebaGuardian是一个Python脚本。为了使它易于使用，整个脚本是�
 
 ## 其他语言 / Other Languages
 
-English Readme is [here](README_en-us.md)
+English Readme is [here](README.md)
