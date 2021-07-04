@@ -55,6 +55,8 @@ TiebaGuardian is a python script. In order to make it easy to use, the whole scr
 
 To realize auto scanning, we use **Linux Crontab** or **Windows Task Schedule** to run the script regularly.
 
+You need to download both the script and the config file, the script won't generate it automaticlly, and make sure these two file are in a same folder.
+
 You can check the detail on [Wiki](https://github.com/SheepChef/TiebaGuardian/wiki)
 
 ## Authors
