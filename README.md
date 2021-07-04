@@ -55,25 +55,7 @@ TiebaGuardian is a python script. In order to make it easy to use, the whole scr
 
 To realize auto scanning, we use **Linux Crontab** or **Windows Task Schedule** to run the script regularly.
 
-I won't describe how to create timed task in detail, make sure you have the basic knowledge of Windows and Linux. You can search how to use these two tools on the web.
-
-#### Windows
-
-1.Open Control Panel
-
-2.Open Administrative Tools
-
-3.Open Task Schedule
-
-4.Click "Create Basic Task"
-
-5.Just choose a appropriate frequency and create the timed task.
-
-#### Linux
-
-1.Run ```crontab -e``` in shell
-
-2.Edit the crontab as you want, and save it.
+You can check the detail on [Wiki](Wiki)
 
 ## Authors
 
