@@ -8,11 +8,11 @@ A powerful, useful Tieba-managing Python script.
 
 1. Reply, post content keyword filtering
 
-2. Explosion proof bar detection for posts (frequency detection, submergence detection)
+2. Flooding detection for posts (frequency detection, submergence detection)
 
-3. Instant blocking function (detect posts with too high frequency, directly block and delete posts, without further judgment of the content, effectively prevent the explosion)
+3. Instant blocking function (detect posts with too high frequency, directly block and delete posts, without further judgment of the content, effectively prevent the Flooding)
 
-4. Illegal account detection for all content publishers (number of concerns, number of fans, number of historical posts)
+4. Illegal account detection for all content publishers (Based on: number of concerns, number of fans, number of historical posts)
 
 5. Post / reply content length detection
 
