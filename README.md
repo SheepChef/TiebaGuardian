@@ -3,7 +3,7 @@
 A powerful, useful Tieba-managing Python script.
 
 ## Functions
-
+<!--
 (Warning：This part is Machine-Translated from Chinese, the accuracy might be low.)
 
 1. Reply, post content keyword filtering
@@ -23,7 +23,8 @@ A powerful, useful Tieba-managing Python script.
 8. Feature function: white keywords (if these keywords are detected in the post, the violation weight will be reduced)
 
 9. Weight calculation system, multi factor violation judgment (that is, each detection item has corresponding weight, the range of weight increase or decrease can be customized, and the weight judgment threshold of blocking / deleting posts can also be customized)
-
+-->
+Updateing!
 ## Getting Started
 
 The instructions below will let you quickly know how to use the script.
