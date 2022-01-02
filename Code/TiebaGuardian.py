@@ -75,6 +75,8 @@ AdbJumpCount = 0
 ARdbJumpCount = 0
 TdbJumpCount = 0
 RdbJumpCount = 0
+AuthorGetCount = 0
+RPAuthorGetCount = 0
 
 ###Function
 def async(f):
@@ -144,10 +146,12 @@ def TieDetailDbG(TidList):
 #TieDetailDbG([7464286425])
 @async
 def AuthorDetailGet(tempx):
+	global AuthorGetCount
 	if(Authors[tempx]["name"] == None):
 		Authors[tempx]["HistoryTieCount"] = -1
 		Authors[tempx]["SubsCount"] = -1
 		Authors[tempx]["FansCount"] = -1
+		AuthorGetCount = AuthorGetCount + 1
 		return
 	if "tb." not in Authors[tempx]["name"]:
 		TempAuthorList = []
@@ -167,6 +171,7 @@ def AuthorDetailGet(tempx):
 			ADbE.execute("SELECT SCOUNT FROM \"_"+str(Authors[tempx]["name"])+"\";")
 			for row in ADbE:
 				Authors[tempx]["SubsCount"] = row[0]
+			AuthorGetCount = AuthorGetCount + 1
 			return
 		headerb["Referer"] = headerb["Referer"] + str(Authors[tempx]["posts"][0])
 		AuthorReq = urllib.request.Request("http://tieba.baidu.com/home/main?un=" + urllib.parse.quote(Authors[tempx]["name"]),headers=headerb)
@@ -185,6 +190,7 @@ def AuthorDetailGet(tempx):
 					Authors[tempx]["HistoryTieCount"] = -1
 					Authors[tempx]["SubsCount"] = -1
 					Authors[tempx]["FansCount"] = -1
+					AuthorGetCount = AuthorGetCount + 1
 					return
 		AuthorDEC = AuthorOr.decode("utf-8")
 		AuthorTieCount =  re.findall(r'home_tab_item_num">(.*?)</',AuthorDEC)[0]
@@ -202,10 +208,12 @@ def AuthorDetailGet(tempx):
 			AuthorFans = AuthorFans.replace("万","")
 			AuthorFans = float(AuthorFans) * 10000
 		Authors[tempx]["FansCount"] = int(AuthorFans)
+		AuthorGetCount = AuthorGetCount + 1
 	else:
 		Authors[tempx]["HistoryTieCount"] = -1
 		Authors[tempx]["SubsCount"] = -1
 		Authors[tempx]["FansCount"] = -1
+		AuthorGetCount = AuthorGetCount + 1
 def AddIntoRecList(name = "null",weight= "null",reason = "null",type = 0):
 	if type == 0:
 		OperateTemp["Name"] = name
@@ -474,10 +482,12 @@ def GetReplyDetail(i):
 	return 1
 @async
 def RPAuthorDetailGet(tempx):
+	global RPAuthorGetCount
 	if(RPAuthors[tempx]["name"] == None):
 		RPAuthors[tempx]["HistoryTieCount"] = -1
 		RPAuthors[tempx]["SubsCount"] = -1
 		RPAuthors[tempx]["FansCount"] = -1
+		RPAuthorGetCount = RPAuthorGetCount + 1
 		return
 	if "tb." not in RPAuthors[tempx]["name"]:
 		TempAuthorList = []
@@ -497,6 +507,7 @@ def RPAuthorDetailGet(tempx):
 			ADbE.execute("SELECT SCOUNT FROM \"_"+str(RPAuthors[tempx]["name"])+"\";")
 			for row in ADbE:
 				RPAuthors[tempx]["SubsCount"] = row[0]
+			RPAuthorGetCount = RPAuthorGetCount + 1
 			return
 	#if(OEMProtect):
 		#print("内存保护机制，跳过用户信息遍历")
@@ -522,11 +533,20 @@ def RPAuthorDetailGet(tempx):
 					RPAuthors[tempx]["HistoryTieCount"] = -1
 					RPAuthors[tempx]["SubsCount"] = -1
 					RPAuthors[tempx]["FansCount"] = -1
+					RPAuthorGetCount = RPAuthorGetCount + 1
 					return
 		AuthorDEC = AuthorOr.decode("utf-8")
-		AuthorTieCount =  re.findall(r'home_tab_item_num">(.*?)</',AuthorDEC)[0]
-		AuthorSubs = re.findall(r'home_tab_item_num">(.*?)</',AuthorDEC)[2]
-		AuthorFans = re.findall(r'home_tab_item_num">(.*?)</',AuthorDEC)[3]
+		try:
+			AuthorTieCount =  re.findall(r'home_tab_item_num">(.*?)</',AuthorDEC)[0]
+			AuthorSubs = re.findall(r'home_tab_item_num">(.*?)</',AuthorDEC)[2]
+			AuthorFans = re.findall(r'home_tab_item_num">(.*?)</',AuthorDEC)[3]
+		except:
+			RPAuthors[tempx]["HistoryTieCount"] = -1
+			RPAuthors[tempx]["SubsCount"] = -1
+			RPAuthors[tempx]["FansCount"] = -1
+			RPAuthorGetCount = RPAuthorGetCount + 1
+			return
+
 		if ("万" in AuthorTieCount):
 			AuthorTieCount = AuthorTieCount.replace("万","")
 			AuthorTieCount = float(AuthorTieCount) * 10000
@@ -539,10 +559,12 @@ def RPAuthorDetailGet(tempx):
 			AuthorFans = AuthorFans.replace("万","")
 			AuthorFans = float(AuthorFans) * 10000
 		RPAuthors[tempx]["FansCount"] = int(AuthorFans)
+		RPAuthorGetCount = RPAuthorGetCount + 1
 	else:
 		RPAuthors[tempx]["HistoryTieCount"] = -1
 		RPAuthors[tempx]["SubsCount"] = -1
 		RPAuthors[tempx]["FansCount"] = -1
+		RPAuthorGetCount = RPAuthorGetCount + 1
 @async
 def DeleteReply(replyobj):
 	if(negation_bool(ReadOnly)):#删除回复楼
@@ -602,9 +624,12 @@ def create_Rtable(tid,pid,author,id,weight,content):
         if(str(pid) in row):
            isExisted=True
     if(not isExisted):
-        insert_dt_cmd="INSERT INTO _"+str(tid)+" (PID,AUTHOR,ID,WEIGHT,CONTENT,CHECKED) VALUES (\""+str(pid)+"\",\""+author+"\",\""+str(id)+"\","+str(weight)+",\""+content.replace("\"","\'")+"\","+"1"+");"
-        RDb.execute(insert_dt_cmd)
-        RDb.commit()
+        try:
+            insert_dt_cmd="INSERT INTO _"+str(tid)+" (PID,AUTHOR,ID,WEIGHT,CONTENT,CHECKED) VALUES (\""+str(pid)+"\",\""+author+"\",\""+str(id)+"\","+str(weight)+",\""+content.replace("\"","\'")+"\","+"1"+");"
+            RDb.execute(insert_dt_cmd)
+            RDb.commit()
+        except:
+            return 0
     return 0
 def create_Atable(name,posts,createtimes,pids,tids,BlockCount,BlockTime,Weight,HCount,FCount,SCount):
     try:
@@ -965,10 +990,12 @@ headerb = {
 
 for tempx in Authors:
 	sleep(0.1)
+	print('\r当前进度:{:.2f}%'.format(AuthorGetCount*100 / len(Authors)), end = '')
 	AuthorDetailGet(tempx)
-print("[信息]本次遍历从数据库中提取了"+str(AdbJumpCount)+"条用户数据")
+
 while(not RequestFinned):
 	for i in Authors:
+		print('\r当前进度:{:.2f}%'.format(AuthorGetCount*100 / len(Authors)), end = '')
 		try:
 			Resss.append(Authors[i]["FansCount"])
 		except:
@@ -983,6 +1010,7 @@ while(not RequestFinned):
 			Resss.append(-2)
 	pass
 	for a in Resss:
+		print('\r当前进度:{:.2f}%'.format(AuthorGetCount*100 / len(Authors)), end = '')
 		if(a==-2):
 			Resss = []
 			RequestFinned = False
@@ -990,6 +1018,8 @@ while(not RequestFinned):
 		else:
 			RequestFinned = True
 pass
+print(" ")
+print("[信息]本次遍历从数据库中提取了"+str(AdbJumpCount)+"条用户数据")
 for tempx in Authors:
 	if (Authors[tempx]["HistoryTieCount"] < Member_historyTie_QuantityLimit):
 		TOperate(4,[],Authors[tempx]["name"],Weight = Member_LimitWeight_per_item)
@@ -1168,10 +1198,12 @@ if(len(RPAuthors)>1000):
 pass
 for tempx in RPAuthors:#遍历用户
 	sleep(0.1)
+	print('\r当前进度:{:.2f}%'.format(RPAuthorGetCount*100 / len(RPAuthors)), end = '')
 	RPAuthorDetailGet(tempx)
-print("[信息]本次遍历从数据库中提取了"+str(ARdbJumpCount)+"条用户数据")
+
 while(not RequestFinned):
 	for i in RPAuthors:
+		print('\r当前进度:{:.2f}%'.format(RPAuthorGetCount*100 / len(RPAuthors)), end = '')
 		try:
 			Resss.append(RPAuthors[i]["FansCount"])
 		except:
@@ -1185,7 +1217,10 @@ while(not RequestFinned):
 		except:
 			Resss.append(-2)
 	pass
+	if (Resss == []):
+		RequestFinned = True
 	for a in Resss:
+		print('\r当前进度:{:.2f}%'.format(RPAuthorGetCount*100 / len(RPAuthors)), end = '')
 		if(a==-2):
 			Resss = []
 			RequestFinned = False
@@ -1193,6 +1228,8 @@ while(not RequestFinned):
 		else:
 			RequestFinned = True
 pass
+print(" ")
+print("[信息]本次遍历从数据库中提取了"+str(ARdbJumpCount)+"条用户数据")
 for tempx in RPAuthors:
 	if (RPAuthors[tempx]["HistoryTieCount"] < Member_historyTie_QuantityLimit):
 		TOperate(6,[],RPAuthors[tempx]["name"],Weight = Member_LimitWeight_per_item)
